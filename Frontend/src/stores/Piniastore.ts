@@ -19,7 +19,8 @@ export const  prostore=defineStore("prod",() => {
             if(!exist){
             product.value.push(pro);
             }
-            else{
+            else
+            {
                 console.log("already exist");
             }
             
@@ -46,3 +47,4 @@ export const  prostore=defineStore("prod",() => {
 
         return { product ,setqty,orders,addorder,addpro ,getProductscount}
     })
+    
