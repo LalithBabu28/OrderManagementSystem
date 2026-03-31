@@ -1,7 +1,7 @@
 <template>
     
     <div class="Item">
-           <img :src="props.productimage" height="100px">
+           <img :src="props.productimage" alt="backgroundimage" height="100px">
             <div class="inside"> 
             <p>   {{  props.productname }} </p>
            <button class="btn-qty"  @click="increment"> + </button>

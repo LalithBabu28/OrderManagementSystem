@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import axios from 'axios';
 import type { ProductDetails } from './Pages/ProductLists.vue';
-import { onMounted, ref, computed } from 'vue';
+import { ref, computed } from 'vue';
 import { prostore } from './stores/Piniastore';
 // 1. Import the Google Login component
 import { GoogleSignInButton, type CredentialResponse } from "vue3-google-signin";

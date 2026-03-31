@@ -16,7 +16,7 @@ export const  prostore=defineStore("prod",() => {
             const exist=product.value.some((p) => p.productid === pro.productid);
             console.log(pro.productid);
 
-            if(!exist){
+            if(exist===false){
             product.value.push(pro);
             }
             else

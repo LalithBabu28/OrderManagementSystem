@@ -29,7 +29,7 @@ import { ref } from 'vue'
   <div>
       <div class="img">
        <p>RestaurantWare</p>
-       <img :src=" porp.myimage" height="100" width="100">
+       <img :src=" porp.myimage" alt="productimg" height="100" width="100">
        <p>{{ porp.productid }}</p>
        <p> {{  porp.productname  }}</p>
        <p> ${{  porp.price  }}   &nbsp; Qty : {{  porp.qty  }} </p>
