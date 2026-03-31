@@ -45,6 +45,12 @@ export const  prostore=defineStore("prod",() => {
             orders.value.forEach((p) => { if(p.productid == productid) {p.qty=qty}});
         }
 
+        function removeorder(productid:string)
+        {
+            orders.value=orders.value.filter((o) => o.productid !== productid);
+            
+        }
+
         return { product ,setqty,orders,addorder,addpro ,getProductscount}
     })
     
