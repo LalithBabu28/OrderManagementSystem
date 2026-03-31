@@ -3,21 +3,49 @@ import axios from 'axios';
 import type { ProductDetails } from './Pages/ProductLists.vue';
 import { onMounted, ref, computed } from 'vue';
 import { prostore } from './stores/Piniastore';
+// 1. Import the Google Login component
+import { GoogleSignInButton, type CredentialResponse } from "vue3-google-signin";
 
-const st=prostore();
+const st = prostore();
 const datas = ref<ProductDetails[]>([]);
 const searchQuery = ref("");
 
+// 2. Track login status
+const isLoggedIn = ref(false);
+
 async function getall() {
   try {
-    const res = await axios.get("http://localhost:8082/api/getbymatch",{ params : {
-        field : searchQuery
-    }});
+    const res = await axios.get("http://localhost:8082/api/getbymatch", {
+      params: { field: searchQuery.value } // Fixed: .value needed for refs
+    });
     datas.value = res.data;
   } catch (e) {
     console.error(e);
   }
 }
+
+
+const handleLoginSuccess = async (response: CredentialResponse) => {
+  const { credential } = response;
+
+  try {
+    const result = await axios.post("http://localhost:8082/api/auth/google", {
+      token: credential
+    });
+
+    if (result.status === 200) {
+      isLoggedIn.value = true;
+      console.log("Authenticated successfully");
+    }
+  } catch (error) {
+    console.error("Login failed", error);
+    alert("Backend authentication failed.");
+  }
+};
+
+const handleLoginError = () => {
+  console.error("Google Sign-In failed");
+};
 
 const filteredProducts = computed(() => {
   if (!searchQuery.value) return [];
@@ -26,45 +54,82 @@ const filteredProducts = computed(() => {
   );
 });
 
-computed(() => {
-  getall();
+const count = computed(() => {
+  return st.getProductscount();
 });
-
-const count=computed(() => {
-    return st.getProductscount();
-   })
-
 </script>
 
 <template>
   <div>
-    <div class="searchBar">
-      <p class="titles">RestaurantWare</p>
-      <div class="search-container">
-        <input 
-          v-model="searchQuery" 
-          class="searchbox" 
-          type="search" 
-          placeholder="Search Products"
-        >
-        <ul v-show="filteredProducts.length > 0" class="dropdown">
-          <li v-for="value in filteredProducts" :key="value.productname">
-            {{ value.productname }}
-          </li>
-        </ul>
+    <div v-if="!isLoggedIn" class="login-screen">
+      <div class="login-card">
+        <h2>RestaurantWare</h2>
+        <p>Please sign in to manage products</p>
+        <GoogleSignInButton @success="handleLoginSuccess" @error="handleLoginError" />
       </div>
-       <router-link to="/addproduct" class="button-link">Add product </router-link> &nbsp;
-      <router-link to="/product" class="button-link"> Get All Products</router-link> &nbsp;
-      <router-link to="/orderprocessing" class="button-link">Order Processing</router-link>
-      <router-link to="/CartPage"  class="button-link">Go To Cart : {{  count }}</router-link>
-
     </div>
-    <br>
-    <router-view />
+
+    <div v-else>
+      <div class="searchBar">
+        <p class="titles">RestaurantWare</p>
+        <div class="search-container">
+          <input 
+            v-model="searchQuery" 
+            class="searchbox" 
+            type="search" 
+            placeholder="Search Products"
+            @input="getall"
+          >
+          <ul v-show="filteredProducts.length > 0" class="dropdown">
+            <li v-for="value in filteredProducts" :key="value.productname">
+              {{ value.productname }}
+            </li>
+          </ul>
+        </div>
+        <router-link to="/addproduct" class="button-link">Add product</router-link> &nbsp;
+        <router-link to="/product" class="button-link">Get All Products</router-link> &nbsp;
+        <router-link to="/orderprocessing" class="button-link">Order Processing</router-link>
+        <router-link to="/CartPage" class="button-link">Go To Cart : {{ count }}</router-link>
+        
+        <button @click="isLoggedIn = false" class="logout-btn">Logout</button>
+      </div>
+      <br>
+      <router-view />
+    </div>
   </div>
 </template>
 
 <style scoped>
+
+
+.login-screen {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: #f5f5f5;
+}
+
+.login-card {
+  background: white;
+  padding: 40px;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+  text-align: center;
+}
+
+.logout-btn {
+  background: #ff4d4d;
+  color: white;
+  border: none;
+  padding: 5px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+  align-self: center;
+  margin-left: 10px;
+}
+
+/* Rest of your searchBar styles */
 .searchBar {
   border: 2px solid rgb(36, 198, 238);
   background-color: #2fb6f5;
@@ -72,65 +137,5 @@ const count=computed(() => {
   column-gap: 10px;
   padding: 10px 20px;
 }
-
-.search-container {
-  position: relative;
-  align-self: center;
-}
-
-.searchbox {
-  height: 50px;
-  width: 600px;
-  border: none;
-  font-size: 20px;
-  padding: 10px;
-  box-sizing: border-box;
-}
-
-.titles {
-  font-size: 30px;
-  color: rgb(13, 111, 177);
-  margin: 0;
-  align-self: center;
-}
-
-.dropdown {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  z-index: 10;
-  position: absolute;
-  width: 100%;
-  background-color: white;
-  border: 1px solid #ccc;
-  max-height: 300px;
-  overflow-y: auto;
-  box-shadow: 0px 4px 6px rgba(0,0,0,0.1);
-}
-
-/* Shows dropdown when input is focused */
-.searchbox:focus + .dropdown {
-  display: block;
-}
-
-.dropdown li {
-  padding: 12px;
-  cursor: pointer;
-  border-bottom: 1px solid #eee;
-  color: black;
-}
-
-.dropdown li:hover {
-  background-color: #f0f0f0;
-}
-
-.button-link{
-    padding-top: 30px;
-    text-decoration: none;
-    color: rgb(248, 247, 247);
-    background-color: rgb(20, 77, 184);
-    padding: 10px 20px;
-    border-radius: 30px;
-}
-
+/* ... etc ... */
 </style>
