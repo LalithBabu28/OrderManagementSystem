@@ -26,7 +26,7 @@ const props = defineProps({
     placeorder: Boolean
 })
 
-// Added 'remove' to emits so the parent knows to remove this from the list
+
 const emit = defineEmits(['caltotal', 'remove'])
 
 onMounted(() => {
@@ -99,7 +99,7 @@ function removeItem() {
 
 .inside {
     display: flex;
-    align-items: center; /* Vertically center content */
+    align-items: center; 
     column-gap: 60px;
     padding: 20px;
 }
@@ -107,7 +107,7 @@ function removeItem() {
 p {
     font-size: 20px;    
     color: rgb(18, 82, 199);
-    margin: 0; /* Cleaned up margins */
+    margin: 0; 
 }
 
 .remove {
