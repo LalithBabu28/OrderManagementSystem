@@ -1,8 +1,20 @@
 <template>
     <h1>Cart Items</h1>
-    <div v-for="value in CartItems" :key="value.productid">
-        <CartCard  ref="childcall"   :productid="value.productid" :productname="value.productname" :productimage="value.Image" :productprice="value.price" @caltotal="handleGrandTotal" /><br>
+    <div v-if="CartItems.length === 0" class="emptycart">
+        <p>Your cart is empty.</p>
+
     </div>
+ <div v-else v-for="value in CartItems" :key="value.productid" class="cartitems">
+    <CartCard 
+        :productid="value.productid" 
+        :productname="value.productname" 
+        :productimage="value.Image" 
+        :productprice="value.price" 
+        @caltotal="handleGrandTotal"
+        @remove="handleRemoveItem" 
+    />
+    <br>
+</div>
 
     <p> Total Amount : $ {{  grandtotal }}</p>
     <button @click="placeorder" class="button-link">Place Order</button>
@@ -17,7 +29,7 @@
     
     import { prostore } from '@/stores/Piniastore';
     import  CartCard  from '@/components/CartCard.vue'
-    import { computed, ref, watch  } from 'vue';
+    import {  ref, watch  } from 'vue';
     import { type ProductDetails } from './ProductLists.vue';
     import axios from 'axios';
 
@@ -27,6 +39,8 @@
     
     const grandtotal = ref<number>(0);
     const visiblediv=ref(false)
+    const removeitems=ref(false);
+
     function handleGrandTotal(e:number){
       grandtotal.value=grandtotal.value+e;
      }
@@ -48,10 +62,30 @@
         if(visiblediv)
     {
         setTimeout(() =>{
-            visiblediv.value = false
+            visiblediv.value = false,
+            removeitems.value=true;
         },3000);
     }
     })
+
+    watch(removeitems,() =>{
+        if(removeitems)
+    {
+         st.removeallorders();
+     st.removeallproduct();
+     CartItems.value = [];
+     grandtotal.value=0;
+    }
+    })
+
+
+function handleRemoveItem(id: string) {
+  
+    CartItems.value = CartItems.value.filter(item => item.productid !== id);
+    
+   
+    st.product = st.product.filter(p => p.productid !== id);
+}
    
 </script>
 

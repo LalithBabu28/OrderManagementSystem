@@ -51,6 +51,21 @@ export const  prostore=defineStore("prod",() => {
             
         }
 
-        return { product ,setqty,orders,addorder,addpro ,getProductscount}
+        function removeallorders()
+        {
+            orders.value=[];
+        }
+        function removeallproduct()
+        {
+            product.value=[];
+        }
+
+            
+function removeProduct(productid: string) {
+    product.value = product.value.filter((p) => p.productid !== productid);
+}
+
+
+        return { product ,setqty,orders,addorder,addpro ,getProductscount,removeorder,removeallorders,removeallproduct,removeProduct}
     })
     

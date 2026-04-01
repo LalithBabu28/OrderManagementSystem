@@ -15,7 +15,7 @@ public class GoogleAuthService {
     private final String clientId = "1005373586835-7v909a4q73eqt5ff9f4rtfaum2a0i442.apps.googleusercontent.com";
 
     public GoogleIdToken.Payload verifyToken(String idTokenString) throws Exception {
-        System.out.println("Received Token for verification: " + idTokenString.substring(0, 10) + "...");
+
         
         GoogleIdTokenVerifier verifier = new GoogleIdTokenVerifier.Builder(
                 new NetHttpTransport(), new GsonFactory())

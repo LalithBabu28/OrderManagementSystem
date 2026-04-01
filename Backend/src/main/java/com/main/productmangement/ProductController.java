@@ -1,5 +1,5 @@
 package com.main.productmangement;
-
+ 
 
 import org.apache.hc.core5.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -48,7 +48,6 @@ public class ProductController {
 	{
 		List<Product> prod=service.getAllpro();
 		service.addelastic(prod);
-		
 	}
 	
 	@GetMapping("/GetElastic")
@@ -62,20 +61,16 @@ public class ProductController {
 	{
 		return service.getbymatch(field);
 	}
-	
+	 
 	@PostMapping("/auth/google")
 	public ResponseEntity<?> authenticate(@RequestBody Map<String, String> body) {
-        try {
+        try  {
             String token = body.get("token");
             GoogleIdToken.Payload payload = authService.verifyToken(token);
             return ResponseEntity.ok("User authenticated: " + payload.getEmail());
-        } catch (Exception e) {
+        }  catch (Exception e) {
             return ResponseEntity.status(HttpStatus.SC_UNAUTHORIZED).body("Invalid Token");
         }
-    }
-	
-	
-	
-	
+	}	
 }
 	

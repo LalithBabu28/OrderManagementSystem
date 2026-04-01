@@ -3,20 +3,19 @@ import axios from 'axios';
 import type { ProductDetails } from './Pages/ProductLists.vue';
 import { ref, computed } from 'vue';
 import { prostore } from './stores/Piniastore';
-// 1. Import the Google Login component
+
 import { GoogleSignInButton, type CredentialResponse } from "vue3-google-signin";
 
 const st = prostore();
 const datas = ref<ProductDetails[]>([]);
 const searchQuery = ref("");
 
-// 2. Track login status
 const isLoggedIn = ref(false);
 
 async function getall() {
   try {
     const res = await axios.get("http://localhost:8082/api/getbymatch", {
-      params: { field: searchQuery.value } // Fixed: .value needed for refs
+      params: { field: searchQuery.value } 
     });
     datas.value = res.data;
   } catch (e) {
@@ -34,11 +33,12 @@ const handleLoginSuccess = async (response: CredentialResponse) => {
     });
 
     if (result.status === 200) {
+      console.log(result.data);
       isLoggedIn.value = true;
       console.log("Authenticated successfully");
     }
   } catch (error) {
-    console.error("Login failed", error);
+    console.error("Login failed", error); 
     alert("Backend authentication failed.");
   }
 };
@@ -129,7 +129,6 @@ const count = computed(() => {
   margin-left: 10px;
 }
 
-/* Rest of your searchBar styles */
 .searchBar {
   border: 2px solid rgb(36, 198, 238);
   background-color: #2fb6f5;
@@ -137,5 +136,5 @@ const count = computed(() => {
   column-gap: 10px;
   padding: 10px 20px;
 }
-/* ... etc ... */
-</style>
+
+</style> 
